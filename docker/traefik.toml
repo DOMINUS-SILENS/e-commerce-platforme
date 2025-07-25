@@ -1,0 +1,60 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+  [entryPoints.websecure]
+    address = ":443"
+
+[api]
+  dashboard = true
+  insecure = true
+
+defaultEntryPoints = ["web", "websecure"]
+
+[providers.docker]
+  endpoint = "unix:///var/run/docker.sock"
+  exposedByDefault = false
+
+[certificatesResolvers.selfsigned.acme]
+  email = "test@example.com"
+  storage = "acme.json"
+  caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  [certificatesResolvers.selfsigned.acme.httpChallenge]
+    entryPoint = "web"
+
+[http.routers]
+  [http.routers.backend]
+    rule = "PathPrefix(`/api`)"
+    entryPoints = ["websecure"]
+    service = "backend"
+    tls = true
+    middlewares = ["auth", "ratelimit", "cors"]
+  [http.routers.http-catchall]
+    entryPoints = ["web"]
+    rule = "HostRegexp(`{host:.+}`)"
+    middlewares = ["redirect-to-https"]
+    service = "noop"
+
+[http.middlewares]
+  [http.middlewares.redirect-to-https.redirectScheme]
+    scheme = "https"
+  [http.middlewares.auth.basicAuth]
+    users = ["admin:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/"] # admin:password
+  # Rate limiting: 100 requests per minute per IP
+  [http.middlewares.ratelimit.rateLimit]
+    average = 100
+    burst = 50
+  # CORS: allow all origins, methods, and headers (for dev)
+  [http.middlewares.cors.headers]
+    accessControlAllowOriginList = ["*"]
+    accessControlAllowMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    accessControlAllowHeaders = ["*", "Authorization"]
+    accessControlAllowCredentials = true
+    accessControlMaxAge = 100
+
+[http.services]
+  [http.services.backend.loadBalancer]
+    [[http.services.backend.loadBalancer.servers]]
+      url = "http://backend:8000"
+  [http.services.noop.loadBalancer]
+    [[http.services.noop.loadBalancer.servers]]
+      url = "http://127.0.0.1" 

@@ -1,0 +1,80 @@
+# Fichiers système
+.git
+.gitignore
+.env
+.venv
+__pycache__
+*.py[cod]
+*$py.class
+
+# Environnements virtuels
+venv/
+env/
+ENV/
+
+# Fichiers de test et couverture
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Fichiers de développement
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Fichiers de build et distribution
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Fichiers de cache Python
+.python-version
+
+# Fichiers de documentation
+docs/_build/
+
+# Fichiers temporaires
+tmp/
+temp/
+
+# Fichiers spécifiques au projet
+*.log
+local_settings.py
+db.sqlite3
+
+# Fichiers de couverture de test
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+
+# Fichiers de cache
+test.db
+*.sqlite
+
+# Fichiers de déploiement
+Dockerfile
+docker-compose.yml
+
+# Fichiers de configuration locaux
+*.local
+
+# Fichiers de débogage
+*.log
+
+# Fichiers de cache Python
+__pycache__/
+*.py[cod]
+*$py.class
