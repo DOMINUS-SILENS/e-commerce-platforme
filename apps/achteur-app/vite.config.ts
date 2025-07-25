@@ -14,14 +14,8 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: [
-      {
-        find: "@",
-        replacement: path.resolve(__dirname, "./src"),
-      },
-      {
-        find: "@shared",
-        replacement: path.resolve(__dirname, "../../shared"),
-      },
+      { find: '@shared', replacement: path.resolve(__dirname, '../../shared') },
+      { find: '@', replacement: path.resolve(__dirname, './src') }
     ],
   },
 }));
