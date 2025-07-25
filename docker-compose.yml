@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -58,8 +57,8 @@ services:
 
   welcome-app:
     build:
-      context: ./apps/welcome-app
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/welcome-app/Dockerfile
       args:
         - NODE_ENV=production
     container_name: welcome-app
@@ -73,6 +72,11 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    volumes:
+      - ./apps/welcome-app:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+    working_dir: /app
     healthcheck:
       test: ["CMD", "wget", "--spider", "http://localhost:80/health"]
       interval: 30s
@@ -99,14 +103,25 @@ services:
     build:
       context: .
       dockerfile: ./apps/vendeur-app/Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: vendeur-app
+    hostname: vendeur-app
+    restart: unless-stopped
     ports:
       - "3001:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://backend:8000
     depends_on:
       - backend
     volumes:
-      - ./shared:/app/shared
       - ./apps/vendeur-app:/app
+      - ./shared:/app/shared
       - /app/node_modules
+    working_dir: /app
+    networks:
+      - ecommerce-network
 
   achteur-app:
     build:
@@ -114,22 +129,27 @@ services:
       dockerfile: ./apps/achteur-app/Dockerfile
       args:
         - NODE_ENV=development
+    container_name: achteur-app
+    hostname: achteur-app
+    restart: unless-stopped
     ports:
       - "3002:80"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://backend:8000
     depends_on:
       - backend
     volumes:
+      - ./apps/achteur-app:/app
       - ./shared:/app/shared
-      - ./apps/achteur-app/src:/app/src
-      - ./apps/achteur-app/public:/app/public
-      - ./apps/achteur-app/package.json:/app/package.json
-      - ./apps/achteur-app/tsconfig.json:/app/tsconfig.json
-      - ./apps/achteur-app/tsconfig.node.json:/app/tsconfig.node.json
-      - ./apps/achteur-app/tsconfig.app.json:/app/tsconfig.app.json
-      - ./apps/achteur-app/vite.config.ts:/app/vite.config.ts
       - /app/node_modules
-    environment:
-      - NODE_ENV=development
+    working_dir: /app
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
 
 volumes:
   db_data:

@@ -45,7 +45,7 @@ class UserCreate(BaseModel):
 
 class User(BaseModel):
     id: int
-    name: str
+    full_name: str
     email: str
     role: Literal['admin', 'vendeur', 'acheteur']
 

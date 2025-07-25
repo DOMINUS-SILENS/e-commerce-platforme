@@ -3,7 +3,7 @@ export interface User {
   id: number;
   email: string;
   fullName: string;
-  role: 'acheteur' | 'vendeur' | 'admin';
+  role: 'vendeur' | 'acheteur' | 'admin';
 }
 
 export interface AuthResponse {
@@ -85,13 +85,13 @@ export class AuthService {
     email: string;
     password: string;
     fullName: string;
-    userType: 'buyer' | 'seller';
+    userType: 'vendeur' | 'acheteur';
   }): Promise<AuthResponse> {
     const payload = {
       email: userData.email,
       password: userData.password,
       full_name: userData.fullName,
-      role: userData.userType === 'buyer' ? 'acheteur' : 'vendeur',
+      role: userData.userType,
     };
     
     console.log('📦 Payload envoyé à /auth/register :', JSON.stringify(payload, null, 2));
